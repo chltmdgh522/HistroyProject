@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="shortcut icon" href="/my-page/imageV4/icon.png" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        body {
+            min-height: 100vh;
+
+            background: -webkit-gradient(linear, left bottom, right top, from(#92b5db), to(#1d466c));
+            background: -webkit-linear-gradient(bottom left, #92b5db 0%, #1d466c 100%);
+            background: -moz-linear-gradient(bottom left, #92b5db 0%, #1d466c 100%);
+            background: -o-linear-gradient(bottom left, #92b5db 0%, #1d466c 100%);
+            background: linear-gradient(to top right, #92b5db 0%, #1d466c 100%);
+        }
+
+        .input-form {
+            max-width: 680px;
+
+            margin-top: 80px;
+            padding: 32px;
+
+            background: #fff;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            -webkit-box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+            -moz-box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15)
+        }
+        .title-center {
+            text-align: center;
+        }
+        .field-error {
+            color: #ff0000;
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <header class="p-3 mb-3 border-bottom" style="background-color: white;">
+        <!-- 임시 변수를 이용하여 객체의 속성 사용 -->
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    <img th:src="|/my-page/imageV4/icon.png|" alt="나눔의 마음 로고" width="50" height="50">
+                    <strong>나눔의 마음 함께하는 힘</strong>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li><a href="/donation" class="nav-link px-2 link-secondary">후원 게시판</a></li>
+                    <li><a href="/free" class="nav-link px-2 link-body-emphasis">자유 게시판</a></li>
+                </ul>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li style="font-weight: bold;">TOTAL&nbsp;</li>
+                    <li th:text="|${visit.get().total}명|"></li>
+                    <li>  &nbsp; &nbsp; </li>
+                    <li style="font-weight: bold;">TODAY&nbsp;</li>
+                    <li th:text="|${visit.get().today}명|">TOTAL</li>
+                </ul>
+
+
+                <div class="dropdown text-end" th:object="${loginMember}">
+                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember ==null}">
+                        <img th:src="|/my-page/images/${loginMember.profile}|" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember !=null}">
+                    </a>
+                    <ul class="dropdown-menu text-small" th:if="${loginMember == null}">
+                        <li><a class="dropdown-item" th:href="@{/members/add}"><strong>회원가입</strong></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/login}"><strong>로그인</strong></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/login}"><strong>관리자 로그인</strong></a></li>
+                    </ul>
+
+                    <ul class="dropdown-menu text-small" th:if="${loginMember !=null}">
+                        <li><a class="dropdown-item" th:href="@{/my-page/{id}(id=${loginMember.id})}">마이페이지</a>
+                        </li>
+                        <li><a class="dropdown-item" th:if="${loginMember.role =='O'}" th:href="@{/admin}">시스템
+                            관리</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" style="padding-left: 5px;">
+                                <button  type="submit" >
+                                    로그아웃
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+</main>
+<div class="container">
+    <div class="input-form-backgroud row">
+        <div class="input-form col-md-12 mx-auto">
+            <h4 class="mb-3 title-center">회원가입</h4>
+            <form class="validation-form" novalidate th:action th:object="${member}" method="post">
+
+                <div th:if="${#fields.hasGlobalErrors()}">
+                    <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+                       th:text="${err}">전체 오류 메시지</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="loginId">아이디</label>
+                        <input type="text" class="form-control" th:field="*{loginId}" placeholder="" value=""
+                               th:errorclass="field-error" required>
+                        <div class="field-error" th:errors="*{loginId}"></div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="name">성함</label>
+                        <input type="text" class="form-control" th:field="*{name}" placeholder="" value=""
+                               th:errorclass="field-error" required>
+                        <div class="field-error" th:errors="*{name}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email">이메일</label>
+                    <input type="email" class="form-control" th:field="*{email}" placeholder="you@example.com" required
+                           th:errorclass="field-error">
+                    <div class="field-error" th:errors="*{email}"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="password">비밀번호</label>
+                        <input type="password" class="form-control" th:field="*{password}" placeholder="비밀번호" value=""
+                               th:errorclass="field-error" required>
+                        <div class="field-error" th:errors="*{password}"></div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="password">비밀번호 확인</label>
+                        <input type="password" class="form-control" th:field="*{passwordCheck}" placeholder="비밀번호 확인" value=""
+                               th:errorclass="field-error" required>
+                        <div class="field-error" th:errors="*{passwordCheck}"></div>
+                    </div>
+                </div>
+
+<!--                <div class="mb-3" th:each="type: ${memberType}">-->
+<!--                    <input type="radio" th:field="*{memberType}" th:value="${type.name()}" th:checked="${type.name() eq 'DEFAULT_TYPE'}">-->
+<!--                    <label th:for="${#ids.prev('memberType')}" th:text="${type.description}"></label>-->
+<!--                </div>-->
+
+
+
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="root">가입 경로</label>
+                        <select class="custom-select d-block w-100" id="root">
+                            <option value=""></option>
+                            <option>카카오톡</option>
+                            <option>인스타그램</option>
+                            <option>페이스북</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            가입 경로를 선택해주세요.
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-4">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="aggrement" required>
+                    <label class="custom-control-label" for="aggrement">개인정보 수집 및 이용에 동의합니다.</label>
+                </div>
+                <div class="mb-4"></div>
+                <button class="btn btn-primary btn-lg btn-block" type="submit">가입 완료</button>
+            </form>
+        </div>
+    </div>
+    <footer class="my-3 text-center text-small">
+        <p class="mb-1">&copy; 2024 YD</p>
+    </footer>
+</div>
+<script>
+    window.addEventListener('load', () => {
+        const forms = document.getElementsByClassName('validation-form');
+
+        Array.prototype.filter.call(forms, (form) => {
+            form.addEventListener('submit', function (event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

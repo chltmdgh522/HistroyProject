@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="shortcut icon" href="/my-page/imageV4/icon.png" type="image/x-icon">
+    <title>후원 신청서</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+
+            background-color: rgb(238, 238, 238);
+        }
+
+        form {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header class="p-3 mb-3 border-bottom" style="background-color: white;">
+        <!-- 임시 변수를 이용하여 객체의 속성 사용 -->
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    <img th:src="|/my-page/imageV4/icon.png|" alt="나눔의 마음 로고" width="50" height="50">
+                    <strong>나눔의 마음 함께하는 힘</strong>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li><a href="/donation" class="nav-link px-2 link-secondary">후원 게시판</a></li>
+                    <li><a href="/free" class="nav-link px-2 link-body-emphasis">자유 게시판</a></li>
+                </ul>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li style="font-weight: bold;">TOTAL&nbsp;</li>
+                    <li th:text="|${visit.get().total}명|"></li>
+                    <li>  &nbsp; &nbsp; </li>
+                    <li style="font-weight: bold;">TODAY&nbsp;</li>
+                    <li th:text="|${visit.get().today}명|">TOTAL</li>
+                </ul>
+
+
+                <div class="dropdown text-end" th:object="${loginMember}">
+                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember ==null}">
+                        <img th:src="|/my-page/images/${loginMember.profile}|" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember !=null}">
+                    </a>
+                    <ul class="dropdown-menu text-small" th:if="${loginMember == null}">
+                        <li><a class="dropdown-item" th:href="@{/members/add}"><strong>회원가입</strong></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/login}"><strong>로그인</strong></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/login}"><strong>관리자 로그인</strong></a></li>
+                    </ul>
+
+                    <ul class="dropdown-menu text-small" th:if="${loginMember !=null}">
+                        <li><a class="dropdown-item" th:href="@{/my-page/{id}(id=${loginMember.id})}">마이페이지</a>
+                        </li>
+                        <li><a class="dropdown-item" th:if="${loginMember.role =='O'}" th:href="@{/admin}">시스템
+                            관리</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" style="padding-left: 5px;">
+                                <button  type="submit" >
+                                    로그아웃
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+</main>
+
+<form th:action method="post" th:object="${give}" onsubmit="return checkDonationAmount()">
+    <label for="name" style=" font-weight: bold;">이름</label>
+    <input type="text" id="name" name="name" th:value="${loginMember.name}" disabled/>
+
+    <label for="email" style=" font-weight: bold;">이메일</label>
+    <input type="email" id="email" name="email" th:value="${loginMember.email}" disabled/>
+
+    <label for="givePoint" style=" font-weight: bold;">후원포인트 선택</label>
+    <input
+            type="range"
+            id="givePoint"
+            name="givePoint"
+            th:field="*{givePoint}"
+            min="1"
+            th:max="${point}"
+            step="77"
+            oninput="updateDonationValue()"
+    />
+    <span id="donationValue" class="mt-2">1</span> 원
+
+    <label for="purpose" style="font-weight: bold;" class="mt-2">후원 목적(필수)</label>
+    <textarea id="giveText" required name="giveText" th:field="*{giveText}" rows="3" class="mt-2"></textarea>
+    <button style="background-color: black; color: white;" type="submit" class="mt-2">기부하기</button>
+
+
+</form>
+
+<script th:inline="javascript">
+    function checkDonationAmount() {
+        var donationAmount = document.getElementById('givePoint').value;
+        if (donationAmount <= 100) {
+            alert('후원포인트는 100점 이상이어야 합니다.');
+            return false;
+        }
+        alert('후원해주셔서 감사합니다!!');
+        return true;
+    }
+
+    function updateDonationValue() {
+        var donationRange = document.getElementById('givePoint');
+        var donationValue = document.getElementById('donationValue');
+        donationValue.innerHTML = donationRange.value;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+</body>
+</html>

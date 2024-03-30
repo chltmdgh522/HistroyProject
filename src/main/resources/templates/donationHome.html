@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="/my-page/imageV4/icon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>후원게시판</title>
+    <style>
+
+        body {
+            background-color: rgb(238, 238, 238);
+        }
+
+        a {
+            color: inherit; /* or any color you prefer */
+            text-decoration: none; /* remove underline if desired */
+        }
+
+        a:hover {
+            color: inherit; /* or any color you prefer on hover */
+        }
+        /* 별도의 CSS 파일이나 <style> 태그 안에 다음과 같이 스타일을 정의합니다. */
+        td a {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header class="p-3 mb-3 border-bottom" style="background-color: white;">
+        <!-- 임시 변수를 이용하여 객체의 속성 사용 -->
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    <img th:src="|/my-page/imageV4/icon.png|" alt="나눔의 마음 로고" width="50" height="50">
+                    <strong>나눔의 마음 함께하는 힘</strong>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li><a href="/donation" class="nav-link px-2 link-secondary">후원 게시판</a></li>
+                    <li><a href="/free" class="nav-link px-2 link-body-emphasis">자유 게시판</a></li>
+                </ul>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li style="font-weight: bold;">TOTAL&nbsp;</li>
+                    <li th:text="|${visit.get().total}명|"></li>
+                    <li>  &nbsp; &nbsp; </li>
+                    <li style="font-weight: bold;">TODAY&nbsp;</li>
+                    <li th:text="|${visit.get().today}명|">TOTAL</li>
+                </ul>
+
+
+                <div class="dropdown text-end" th:object="${loginMember}">
+                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember ==null}">
+                        <img th:src="|/my-page/images/${loginMember.profile}|" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember !=null}">
+                    </a>
+                    <ul class="dropdown-menu text-small" th:if="${loginMember == null}">
+                        <li><a class="dropdown-item" th:href="@{/members/add}"><strong>회원가입</strong></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/login}"><strong>로그인</strong></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/login}"><strong>관리자 로그인</strong></a></li>
+                    </ul>
+
+                    <ul class="dropdown-menu text-small" th:if="${loginMember !=null}">
+                        <li><a class="dropdown-item" th:href="@{/my-page/{id}(id=${loginMember.id})}">마이페이지</a>
+                        </li>
+                        <li><a class="dropdown-item" th:if="${loginMember.role =='O'}" th:href="@{/admin}">시스템
+                            관리</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" style="padding-left: 5px;">
+                                <button  type="submit" >
+                                    로그아웃
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+</main>
+<div class="container" style="max-width: 600px; margin-top: 20px;">
+    <h2 class="text-center mb-4">후원 랭킹🥇</h2>
+
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th>순위</th>
+            <th>이름</th>
+            <th>기부 포인트</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member,loop: ${pointMember}">
+            <td style="font-weight: bold;" th:text="|${loop.index +1}등|">1</td>
+            <td><a th:text="${member.name}" th:href="@{/my-page/{id}(id=${member.id})}">회원 이름</a></td>
+            <td th:text="${member.totalGivePoint + '점'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div class="container mt-3">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="col" th:each="boards : ${board}">
+            <div class="card shadow-sm">
+                <svg
+                     class="bd-placeholder-img card-img-top" width="100%" height="225"
+                     xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                     preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title>
+                    <rect width="100%" height="100%" fill="#55595c"/>
+
+                    <image th:href="@{/my-page/imagesV3/{boardId}(boardId=${boards.id})}" x="0" y="0" width="100%"
+                           height="100%"/>
+                </svg>
+                <div class="card-body">
+                    <p class="card-text" th:text="${boards.title}"></p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <a th:href="@{/board/{id}/{boardId}(id=${boards.memberId},boardId=${boards.boardId})}"
+                               style="color: cornflowerblue;">더보기</a>
+                        </div>
+                        <small class="text-body-secondary" th:text="|${boards.memberName} ${boards.date}|"></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-dark mt-3" type="button" th:onclick="|location.href='@{/board}'|">
+        글쓰기
+    </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>

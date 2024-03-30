@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 관리</title>
+    <link rel="shortcut icon" href="/my-page/imageV4/icon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<style>
+    body {
+        background-color: rgb(238, 238, 238);
+    }
+</style>
+</head>
+<body class="text-center">
+<main>
+    <header class="p-3 mb-3 border-bottom" style="background-color: white;">
+        <!-- 임시 변수를 이용하여 객체의 속성 사용 -->
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    <img th:src="|/my-page/imageV4/icon.png|" alt="나눔의 마음 로고" width="50" height="50">
+                    <strong>나눔의 마음 함께하는 힘</strong>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li><a href="/donation" class="nav-link px-2 link-secondary">후원 게시판</a></li>
+                    <li><a href="/free" class="nav-link px-2 link-body-emphasis">자유 게시판</a></li>
+                </ul>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li style="font-weight: bold;">TOTAL&nbsp;</li>
+                    <li th:text="|${visit.get().total}명|"></li>
+                    <li>  &nbsp; &nbsp; </li>
+                    <li style="font-weight: bold;">TODAY&nbsp;</li>
+                    <li th:text="|${visit.get().today}명|">TOTAL</li>
+                </ul>
+
+
+                <div class="dropdown text-end" th:object="${loginMember}">
+                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember ==null}">
+                        <img th:src="|/my-page/images/${loginMember.profile}|" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember !=null}">
+                    </a>
+                    <ul class="dropdown-menu text-small" th:if="${loginMember == null}">
+                        <li><a class="dropdown-item" th:href="@{/members/add}"><strong>회원가입</strong></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/login}"><strong>로그인</strong></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/login}"><strong>관리자 로그인</strong></a></li>
+                    </ul>
+
+                    <ul class="dropdown-menu text-small" th:if="${loginMember !=null}">
+                        <li><a class="dropdown-item" th:href="@{/my-page/{id}(id=${loginMember.id})}">마이페이지</a>
+                        </li>
+                        <li><a class="dropdown-item" th:if="${loginMember.role =='O'}" th:href="@{/admin}">시스템
+                            관리</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" style="padding-left: 5px;">
+                                <button  type="submit" >
+                                    로그아웃
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+</main>
+<div class="container">
+    <h2 class="my-4">회원 관리</h2>
+    <hr class="my-4">
+
+    <!-- 게시판 검색 폼 -->
+    <form method="get" th:object="${memberSearchCond}">
+
+        <div class="input-group mb-3">
+            <!-- 작성자 검색 -->
+            <input type="text" th:field="*{loginId}" class="form-control" placeholder="사용자 아이디 검색"
+                   aria-label="사용자 아이디 검색" aria-describedby="button-search">
+            <button class="btn btn-dark" type="submit" id="button-search">검색</button>
+        </div>
+    </form>
+
+    <!-- 게시판 목록 -->
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th>회원 번호</th>
+            <th>회원 아이디</th>
+            <th>회원 이름</th>
+            <th>회원 E-mail</th>
+            <th>회원 포인트</th>
+            <th>회원 기부 포인트</th>
+            <th>회원 계정 생성일</th>
+            <th>회원 계정 삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member,loop : ${paging}">
+            <td th:text="${(paging.number * paging.size) + loop.index +1}"></td>
+            <td th:text="${member.loginId}"></td>
+            <td th:text="${member.name}"></td>
+            <td th:text="${member.email}"></td>
+            <td>
+                <form th:action="@{/admin/{loginId}/point(loginId=${member.loginId})}" method="post">
+                    <input type="text" name="point" id="point" th:value="${member.point}" />
+                    <button class="btn btn-primary" type="submit">수정</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/admin/{loginId}/givePoint(loginId=${member.loginId})}" method="post">
+                    <input type="text" name="totalGivePoint" id="totalGivePoint" th:value="${member.totalGivePoint}" />
+                    <button class="btn btn-primary" type="submit">수정</button>
+                </form>
+            </td>
+            <td th:text="${member.date}"> </td>
+            <td>
+                <form th:action="@{/admin/{loginId}(loginId=${member.loginId})}" method="post">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <input type="submit" value="삭제" class="btn btn-danger" th:if="${member.loginId ne 'chltmdgh522'}"/>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 페이징처리 시작 -->
+    <div th:if="${!paging.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{|?loginId=${memberSearchCond.loginId}&page=${paging.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                th:if="${page >= paging.number-5 and page <= paging.number+5}"
+                th:classappend="${page == paging.number} ? 'active'"
+                class="page-item">
+                <a th:text="${page+1}" class="page-link"
+                   th:href="@{|?loginId=${memberSearchCond.loginId}&page=${page}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?loginId=${memberSearchCond.loginId}&page=${paging.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+</body>
+</html>

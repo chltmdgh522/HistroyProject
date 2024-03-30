@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <script src="/docs/5.3/assets/js/color-modes.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, 그리고 Bootstrap 기여자들">
+    <meta name="generator" content="Hugo 0.115.4">
+    <title th:text="|${board.memberName}님의 게시글|"></title>
+    <link rel="shortcut icon" href="/my-page/imageV4/icon.png" type="image/x-icon">
+    <link rel="canonical" href="https://getbootstrap.kr/docs/5.3/examples/blog/">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/5.3/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#712cf9">
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .b-example-divider {
+            width: 100%;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, .1);
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+        }
+
+        .b-example-vr {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh;
+        }
+
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor;
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .btn-bd-primary {
+            --bd-violet-bg: #712cf9;
+            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+            --bs-btn-font-weight: 600;
+            --bs-btn-color: var(--bs-white);
+            --bs-btn-bg: var(--bd-violet-bg);
+            --bs-btn-border-color: var(--bd-violet-bg);
+            --bs-btn-hover-color: var(--bs-white);
+            --bs-btn-hover-bg: #6528e0;
+            --bs-btn-hover-border-color: #6528e0;
+            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+            --bs-btn-active-color: var(--bs-btn-hover-color);
+            --bs-btn-active-bg: #5a23c8;
+            --bs-btn-active-border-color: #5a23c8;
+        }
+
+        .bd-mode-toggle {
+            z-index: 1500;
+        }
+
+
+        body {
+            background-color: rgb(238, 238, 238);
+        }
+
+        a {
+            color: inherit; /* or any color you prefer */
+            text-decoration: none; /* remove underline if desired */
+        }
+
+        a:hover {
+            color: inherit; /* or any color you prefer on hover */
+        }
+
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="blog.css" rel="stylesheet">
+</head>
+<body>
+<main>
+    <header class="p-3 mb-3 border-bottom" style="background-color: white;">
+        <!-- 임시 변수를 이용하여 객체의 속성 사용 -->
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    <img th:src="|/my-page/imageV4/icon.png|" alt="나눔의 마음 로고" width="50" height="50">
+                    <strong>나눔의 마음 함께하는 힘</strong>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li><a href="/donation" class="nav-link px-2 link-secondary">후원 게시판</a></li>
+                    <li><a href="/free" class="nav-link px-2 link-body-emphasis">자유 게시판</a></li>
+                </ul>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-12 justify-content-center mb-md-0"
+                    style="padding-left: 100px;">
+                    <li style="font-weight: bold;">TOTAL&nbsp;</li>
+                    <li th:text="|${visit.get().total}명|"></li>
+                    <li>  &nbsp; &nbsp; </li>
+                    <li style="font-weight: bold;">TODAY&nbsp;</li>
+                    <li th:text="|${visit.get().today}명|">TOTAL</li>
+                </ul>
+
+
+                <div class="dropdown text-end" th:object="${loginMember}">
+                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember ==null}">
+                        <img th:src="|/my-page/images/${loginMember.profile}|" alt="mdo" width="32" height="32"
+                             class="rounded-circle" th:if="${loginMember !=null}">
+                    </a>
+                    <ul class="dropdown-menu text-small" th:if="${loginMember == null}">
+                        <li><a class="dropdown-item" th:href="@{/members/add}"><strong>회원가입</strong></a>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/login}"><strong>로그인</strong></a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/login}"><strong>관리자 로그인</strong></a></li>
+                    </ul>
+
+                    <ul class="dropdown-menu text-small" th:if="${loginMember !=null}">
+                        <li><a class="dropdown-item" th:href="@{/my-page/{id}(id=${loginMember.id})}">마이페이지</a>
+                        </li>
+                        <li><a class="dropdown-item" th:if="${loginMember.role =='O'}" th:href="@{/admin}">시스템
+                            관리</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" style="padding-left: 5px;">
+                                <button  type="submit" >
+                                    로그아웃
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+</main>
+
+<main class="container">
+
+    <div class="row g-5">
+        <div class="col-md-8">
+            <h3 class="pb-4 mb-4 border-bottom" style="font-weight: bold;" th:text="|${board.memberName}님의 게시글|">
+                From the Firehose
+            </h3>
+
+            <article class="blog-post" th:object="${board}">
+                <h2 class="display-5 link-body-emphasis mb-1" th:text="${board.title}">Sample blog post</h2>
+                <p class="blog-post-meta" th:text="|${board.date} ${update}| ">January 1, 2021 by</p>
+
+                <div class="form-group" th:if="${board.boardImage} !=null">
+                    <img th:src="|/my-page/imagesV3/${board.id}|" width="400" height="400"/>
+                </div>
+
+                <p style="font-weight: bold;" th:text="${board.content}"> This blog post shows a few different types of content that’s supported
+                    and styled with Bootstrap.
+                    Basic typography, lists, tables, images, code, and more are all supported as expected.</p>
+                <hr>
+                <p th:text="|조회수: ${board.viewCount}|"></p>
+                <a th:href="@{/board/{boardId}/edit(boardId=${board.boardId})}"
+                   class="btn btn-dark btn-sm mt-3" th:if="${loginMember.id==board.memberId}">수정</a>
+
+                <form th:action="@{/board/{id}/{boardId}(id=${board.memberId},boardId=${board.boardId})}" method="post">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <input type="submit" value="삭제" class="btn btn-danger btn-sm mt-3" th:if="${loginMember.id == board.memberId}"/>
+                </form>
+            </article>
+
+
+        </div>
+
+        <div class="col-md-4">
+            <div class="position-sticky" style="top: 2rem;">
+                <div class="p-4 mb-3 bg-body-tertiary rounded" th:object="${board}" th:if="${board.boardType}">
+                    <div style="font-size: 18px; font-weight: bold;" th:if="${board.givePoint} le ${board.optionPoint}">
+                        <p class="mb-0" th:text="|${board.givePoint}점 / ${board.optionPoint}점 진행률: ${process}%|">
+                            Customize this section to tell your visitors a little bit about your
+                            publication,
+                            writers, content, or something else entirely. Totally up to you.</p>
+                    </div>
+                    <div th:if="${board.givePoint} ge ${board.optionPoint}">
+                        <p style="font-size: 18px; font-weight: bold;" class="mb-0"
+                           th:text="|${board.optionPoint}점 목표금액을 달성했습니다!|">Customize this section to tell your visitors
+                            a little bit about your
+                            publication,
+                            writers, content, or something else entirely. Totally up to you.</p>
+                    </div>
+                    <form th:action="@{/give/{id}(id=${board.id})}" method="get" th:if="${board.givePoint} le ${board.optionPoint}"
+                          class="mt-3">
+                        <input type="submit" value="후원하기" class="btn btn-dark" th:if="${board.boardType}"/>
+                    </form>
+
+                </div>
+
+                <div>
+                    <div class="card mb-2" th:if="${!board.boardType}">
+                        <!-- 댓글 입력 폼 -->
+                        <form th:action="@{/comment/{memberId}/{boardId}(memberId=${memberId},boardId=${board.boardId})}"
+                              method="post"
+                              th:object="${comment}">
+                            <div style="font-size: 18px; font-weight: bold;" class="card-header bg-light">
+                                댓글
+                            </div>
+
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <div class="form-inline mb-2">
+                                            <label for="loginId"><i class="fa fa-user-circle-o fa-2x"></i></label>
+                                            <input style=" font-weight: bold;" type="text" class="form-control ml-2"
+                                                   placeholder="Enter yourId" th:value="|${loginMember.name}님|"
+                                                   disabled>
+                                        </div>
+                                        <textarea class="form-control" th:field="*{content}" rows="3"
+                                                  required></textarea>
+                                        <button type="submit" class="btn btn-dark mt-3">댓글 등록</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <ul class="list-unstyled">
+                        <ul class="list-group mt-3" th:if="${!board.boardType}">
+                            <li th:each="comment : ${fcomment}" class="list-group-item">
+                                <p style="font-weight: bold;" th:text="${comment.content}"></p>
+                                <a th:href="@{/my-page/{memberId}(memberId=${comment.memberId})}">
+                                    <img th:src="|/my-page/imagesV2/${comment.memberId}|" width="30" height="30"/>
+                                    <small class="text-muted" th:text="${comment.memberName}"></small>
+                                </a>
+                                <small class="text-muted" th:text="${comment.date} "></small>
+
+                                <form th:action="@{/board/{memberId}/{boardId}/{commentId}
+            (memberId=${board.memberId}, boardId=${board.boardId}, commentId=${comment.id})}" method="post"
+                                      style="display:inline;">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <input type="submit" value="삭제" class="btn btn-dark btn-sm mt-3" th:if="${loginMember.id == comment.memberId}"/>
+
+                                </form>
+                            </li>
+                        </ul>
+
+
+                        <!-- 기부 댓글 목록 -->
+                        <ul class="list-group mt-3" th:if="${board.boardType}">
+                            <li th:each="gives : ${give}" class="list-group-item">
+                                <p style="font-size: 18px; font-weight: bold;"
+                                   th:text="|❤️${gives.givePoint}점 후원❤️|"></p>
+                                <p style="font-weight: bold;" th:text="${gives.giveText}"></p>
+                                <a th:href="@{/my-page/{memberId}(memberId=${comment.memberId})}">
+                                    <img th:src="|/my-page/imagesV2/${gives.memberId}|" width="30" height="30"/>
+                                    <small class="text-muted" th:text="|${gives.name}님|"></small>
+                                </a>
+                                <small class="text-muted" th:text="${gives.date} "></small>
+                            </li>
+                        </ul>
+
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
